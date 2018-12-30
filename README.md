@@ -1,6 +1,6 @@
-# Intake [![Build Status](https://travis-ci.org/Electroid/intake.png?branch=master)](https://travis-ci.org/Electroid/intake)
+# Intake - Forked by Harieo from Electroid [![Build Status](https://travis-ci.org/Electroid/intake.png?branch=master)](https://travis-ci.org/Electroid/intake)
 
-Intake is a command parsing library that can be implemented along various platforms, such as Minecraft.
+Intake is a command parsing library that can be implemented along various platforms, such as Minecraft. Forked additions included later support for Spigot, Google's Guava and easier to use module injection.
 
 When a user inputs a command:
 
