@@ -286,7 +286,7 @@ public final class ArgumentParser {
                 }
             };
 
-            if (TypeToken.of(Optional.class).isAssignableFrom(type)) {
+            if (TypeToken.of(Optional.class).isSubtypeOf(type)) {
                 type = ((ParameterizedType) type).getActualTypeArguments()[0];
 
                 seenOptionalParameter = true;
