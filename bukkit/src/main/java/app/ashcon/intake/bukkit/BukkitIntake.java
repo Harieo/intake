@@ -4,14 +4,15 @@ import app.ashcon.intake.CommandException;
 import app.ashcon.intake.Intake;
 import app.ashcon.intake.InvalidUsageException;
 import app.ashcon.intake.InvocationCommandException;
+import app.ashcon.intake.argument.ArgumentException;
+import app.ashcon.intake.argument.CommandArgs;
 import app.ashcon.intake.argument.Namespace;
 import app.ashcon.intake.bukkit.command.BukkitCommand;
 import app.ashcon.intake.bukkit.command.BukkitHelpTopic;
 import app.ashcon.intake.dispatcher.Dispatcher;
 import app.ashcon.intake.dispatcher.SimpleDispatcher;
 import app.ashcon.intake.fluent.CommandGraph;
-import app.ashcon.intake.parametric.Injector;
-import app.ashcon.intake.parametric.ParametricBuilder;
+import app.ashcon.intake.parametric.*;
 import app.ashcon.intake.parametric.provider.PrimitivesModule;
 import app.ashcon.intake.util.auth.AuthorizationException;
 import com.google.common.base.Joiner;
@@ -28,11 +29,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 /**
  * Omnibus API that hooks into a {@link JavaPlugin} and
@@ -49,9 +52,8 @@ public class BukkitIntake implements CommandExecutor, TabCompleter {
     private final ParametricBuilder builder;
     private final Dispatcher dispatcher;
 
-    public BukkitIntake(Plugin plugin, Consumer<CommandGraph> init) {
+    public BukkitIntake(Plugin plugin, Consumer<CommandGraph> init, Injector injector) {
         this.plugin = plugin;
-        Injector injector = Intake.createInjector();
         injector.install(new PrimitivesModule());
         injector.install(new BukkitModule());
         this.injector = injector;
@@ -71,8 +73,9 @@ public class BukkitIntake implements CommandExecutor, TabCompleter {
         getCommandMap().registerAll(plugin.getName(), commands);
     }
 
-    public BukkitIntake(Plugin plugin, Object... commands) {
-        this(plugin, graph -> Stream.of(commands).forEachOrdered(command -> graph.groupedCommands().registerGrouped(command)));
+    public BukkitIntake(Plugin plugin, Injector injector, Object... commands) {
+        this(plugin, graph -> Stream.of(commands)
+				.forEachOrdered(command -> graph.groupedCommands().registerGrouped(command)), injector);
     }
 
     public Injector getInjector() {
