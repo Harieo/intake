@@ -52,6 +52,10 @@ public class BukkitIntake implements CommandExecutor, TabCompleter {
     private final ParametricBuilder builder;
     private final Dispatcher dispatcher;
 
+    public BukkitIntake(Plugin plugin, Consumer<CommandGraph> init) {
+        this(plugin, init, Intake.createInjector());
+    }
+
     public BukkitIntake(Plugin plugin, Consumer<CommandGraph> init, Injector injector) {
         this.plugin = plugin;
         injector.install(new PrimitivesModule());
@@ -71,6 +75,10 @@ public class BukkitIntake implements CommandExecutor, TabCompleter {
                                            .map(cmd -> new BukkitCommand(plugin, this, this, cmd))
                                            .collect(Collectors.toList());
         getCommandMap().registerAll(plugin.getName(), commands);
+    }
+
+    public BukkitIntake(Plugin plugin, Object... commands) {
+        this(plugin, Intake.createInjector(), commands);
     }
 
     public BukkitIntake(Plugin plugin, Injector injector, Object... commands) {
